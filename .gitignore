@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+
+.venv/
+logs/
+
+*.pid
+.DS_Store
+.vscode/
