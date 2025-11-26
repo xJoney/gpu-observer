@@ -2,12 +2,17 @@ import subprocess
 import json
 import os
 import time
+import threading
+import uvicorn
 from datetime import datetime
+from fastapi import FastAPI
 
+# vars
 NAME = "GPU Monitor"
 LOG_DIR = "logs"
 SUCCESS_INTERVAL = 5
 ERROR_INTERVAL = 10
+LATEST_METRICS = None
 
 # main func that retrieves metrics
 def get_gpu_metrics():
@@ -55,7 +60,7 @@ def log_json(entry):
     logfile = get_daily_logfile()
 
     with open(logfile, "a") as f:
-        f.write(json.dumps(entry) + "n")
+        f.write(json.dumps(entry) + "\n")
 
 # log successfull metric collection
 def log_metrics(gpus):
@@ -87,8 +92,37 @@ def print_banner(gpu_count):
 
 
 
-if __name__ == "__main__":
+def metrics_loop():
+    global LATEST_METRICS
 
+    while True:
+        try:
+            metrics = get_gpu_metrics()
+            LATEST_METRICS = {
+                "timestamp" : datetime.now().isoformat(),
+                "gpus" : metrics
+            }
+            log_metrics(metrics)
+            time.sleep(SUCCESS_INTERVAL)
+            print(f"OK:", metrics)
+        except Exception as e:
+            err_msg = str(e)
+            log_error(err_msg)
+            time.sleep(ERROR_INTERVAL)
+            print(f"ERROR: ", err_msg)
+
+
+# route for metrics 
+app = FastAPI()
+@app.get("/metrics")
+def get_metrics():
+    if LATEST_METRICS is None:
+        return {"status": "warming_up", "message": "missing populated data.."}
+    return LATEST_METRICS
+
+
+if __name__ == "__main__":
+    # startup failure handler
     try:
         initial_metrics = get_gpu_metrics()
         gpu_count = len(initial_metrics)
@@ -98,17 +132,11 @@ if __name__ == "__main__":
         gpu_count = 0
         print_banner(gpu_count)
 
+    # thread is running metrics_loop until main process ends/shutdown
+    thread = threading.Thread(target=metrics_loop, daemon=True)
+    thread.start()
 
+    # runs the server
+    uvicorn.run("gpu_service:app", host="0.0.0.0", port = 8080)
 
-    while True:
-        try:
-            metrics = get_gpu_metrics()
-            log_metrics(metrics)
-            time.sleep(SUCCESS_INTERVAL)
-            print(f"OK:", metrics)
-        except Exception as e:
-            err_msg = str(e)
-            log_error(err_msg)
-            time.sleep(ERROR_INTERVAL)
-            print(f"ERROR: ", err_msg)
 
