@@ -10,3 +10,6 @@ logs/
 *.pid
 .DS_Store
 .vscode/
+
+test_run.py
+grafana-data/
