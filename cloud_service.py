@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 
 # vars
 LOG_DIR = "logs"
@@ -58,9 +58,22 @@ def summary():
 def health():
     return {"status": "healthy", "machines": len(LATEST_METRICS)} # need to add check for the system health status
 
+@app.get('/metrics')
+def prom_metrics():
+    lines = []
 
+    for machine_id, data in LATEST_METRICS.items():
+        gpus = data.get("gpus",[])
 
-
+        for gpu in gpus:
+            gpu_id = gpu.get("gpu_id", "unknown")
+            labels = f'machine="{machine_id}",gpu="{gpu_id}",name="{gpu.get("name", "unknown")}"'  
+            lines.append(f'gpu_temperature_edge{{{labels}}} {gpu.get("temperature_edge_c", 0)}')
+            lines.append(f'gpu_temperature_hotspot{{{labels}}} {gpu.get("temperature_hotspot_c", 0)}')
+            lines.append(f'gpu_temperature_memory{{{labels}}} {gpu.get("temperature_mem_c", 0)}')            
+            lines.append(f'gpu_utilization_percent{{{labels}}} {gpu.get("utilization_percent", 0)}')
+            lines.append(f'gpu_vram_percent{{{labels}}} {gpu.get("vram_percent", 0)}')
+    return Response(content="\n".join(lines) + "\n", media_type="text/plain")
 
 
 if __name__ == "__main__":
