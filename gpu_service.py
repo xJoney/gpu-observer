@@ -24,11 +24,24 @@ def get_gpu_metrics():
         gpus.append({
             "gpu_id": card,
             "name": metrics.get("Device Name"),
+
+            # temps
             "temperature_edge_c": float(metrics.get("Temperature (Sensor edge) (C)", 0)),
             "temperature_hotspot_c": float(metrics.get("Temperature (Sensor junction) (C)", 0)),
             "temperature_mem_c": float(metrics.get("Temperature (Sensor memory) (C)", 0)),
+
+            # utilization
             "utilization_percent": int(metrics.get("GPU use (%)", 0)),
-            "vram_percent": int(metrics.get("GPU Memory Allocated (VRAM%)", 0))
+            "vram_percent": int(metrics.get("GPU Memory Allocated (VRAM%)", 0)),
+
+            # power
+            "power_average": float(metrics.get("Average Graphics Package Power (W)", 0)),
+            "power_max_w": float(metrics.get("Max Graphics Package Power (W)", 0)),
+
+            # clock speeds
+            "clock_gpu": int(metrics.get("current_gfxclk (MHz)",0)),
+            "clock_memory": int(metrics.get("current_gfxclk (MHz)",0))
+
         })
     return gpus
 

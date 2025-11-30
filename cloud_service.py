@@ -73,6 +73,11 @@ def prom_metrics():
             lines.append(f'gpu_temperature_memory{{{labels}}} {gpu.get("temperature_mem_c", 0)}')            
             lines.append(f'gpu_utilization_percent{{{labels}}} {gpu.get("utilization_percent", 0)}')
             lines.append(f'gpu_vram_percent{{{labels}}} {gpu.get("vram_percent", 0)}')
+            lines.append(f'gpu_power_average{{{labels}}} {gpu.get("power_average",0)}')
+            lines.append(f'gpu_power_max{{{labels}}} {gpu.get("power_max_w",0)}')
+            lines.append(f'gpu_clock_gpu{{{labels}}} {gpu.get("clock_gpu",0)}')
+            lines.append(f'gpu_clock_memory{{{labels}}} {gpu.get("clock_memory",0)}')
+
     return Response(content="\n".join(lines) + "\n", media_type="text/plain")
 
 
