@@ -1,0 +1,15 @@
+groups:
+  - name: gpu_alerts
+    interval: 30s
+    rules:
+
+
+      # Alert when GPU temp passes 80 deg celsius
+      - alert: HighGPUTemperature
+        expr: gpu_temperature_edge > 55
+        for: 5s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High GPU temperature on {{ $labels.name }}"
+          description: "GPU {{ $labels.gpu }} on {{ $labels.machine }} temperature is at {{ $value }}°C (threshold: 80°C)"
