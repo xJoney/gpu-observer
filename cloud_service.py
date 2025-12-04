@@ -81,6 +81,36 @@ def prom_metrics():
     return Response(content="\n".join(lines) + "\n", media_type="text/plain")
 
 
+
+# recevies alert from alert manager
+@app.post("/alert")
+def receive_alert(payload: dict):
+    print("\n" + "="*50)
+    print("ALERT RECEIVED")
+    print("="*50)
+    
+    alerts = payload.get("alerts", [])
+    for alert in alerts:
+        status = alert.get("status", "unknown")
+        labels = alert.get("labels", {})
+        annotations = alert.get("annotations", {})
+        
+        print(f"\nStatus: {status.upper()}")
+        print(f"Alert: {labels.get('alertname', 'Unknown')}")
+        print(f"Severity: {labels.get('severity', 'Unknown')}")
+        print(f"Summary: {annotations.get('summary', 'No summary')}")
+        print(f"Description: {annotations.get('description', 'No description')}")
+        print("-" * 50)
+    
+    # Log to file
+    log_json({
+        "timestamp": datetime.now().isoformat(),
+        "event": "alert",
+        "alerts": alerts
+    })
+    
+    return {"status": "ok"}
+
 if __name__ == "__main__":
     import uvicorn
     print("cloud service on port 8081")
