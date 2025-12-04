@@ -13,3 +13,13 @@ groups:
         annotations:
           summary: "High GPU temperature on {{ $labels.name }}"
           description: "GPU {{ $labels.gpu }} on {{ $labels.machine }} temperature is at {{ $value }}°C (threshold: 80°C)"
+
+      # Alert when GPU is idle
+      - alert: GPUIdle
+        expr: avg_over_time(gpu_utilization_percent[5m]) < 5 # added the avg to avoid spikes
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU has been idle for 5 minutes"
+          description: "Ready to queue up test runs"
