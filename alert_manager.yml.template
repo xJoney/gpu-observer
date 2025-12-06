@@ -10,6 +10,14 @@ route:
 
 receivers:
   - name: 'console'
+    email_configs:
+    - to: '$EMAIL_TO'
+      from: '$EMAIL_FROM'
+      smarthost: 'smtp.gmail.com:587'
+      auth_username: '$EMAIL_USER'
+      auth_password: '$EMAIL_PASS'
+      headers:
+        Subject: 'GPU Alert: {{ .GroupLabels.alertname }}'
     webhook_configs:
       - url: 'http://172.17.0.1:8081/alert'
         send_resolved: true
