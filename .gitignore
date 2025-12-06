@@ -13,3 +13,7 @@ logs/
 
 test_run.py
 grafana-data/
+
+
+# email acc info
+.env
