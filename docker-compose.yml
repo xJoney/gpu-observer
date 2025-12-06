@@ -22,12 +22,13 @@ services:
     container_name: alertmanager
     ports:
       - "9093:9093"
+    env_file:
+      - .env
     volumes:
-      - ./alert_manager.yml:/etc/alertmanager/alertmanager.yml
+      - ./alert_manager.yml.template:/etc/alertmanager/alertmanager.yml.template
+      - ./start-alertmanager.sh:/start-alertmanager.sh
       - alertmanager-data:/alertmanager
-    command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
-      - '--storage.path=/alertmanager'
+    entrypoint: ["/bin/sh", "/start-alertmanager.sh"]
     restart: unless-stopped
     networks:
       - monitoring
