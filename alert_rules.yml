@@ -6,7 +6,7 @@ groups:
 
       # Alert when GPU temp passes 80 deg celsius
       - alert: HighGPUTemperature
-        expr: gpu_temperature_edge > 55
+        expr: gpu_temperature_edge > 75
         for: 5s
         labels:
           severity: warning
