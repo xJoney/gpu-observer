@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+
+  cloudservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.cloudservice
+    container_name: cloudservice
+    ports:
+      - "8081:8081"
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+
   prometheus: 
     image: prom/prometheus:latest
     container_name: prometheus

@@ -1,0 +1,10 @@
+# dockerfile for cloud service script
+FROM python:3.9-slim
+
+WORKDIR /app
+
+RUN pip install fastapi uvicorn requests
+
+COPY cloud_service.py .
+
+CMD ["python", "cloud_service.py"]
