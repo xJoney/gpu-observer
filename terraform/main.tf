@@ -15,7 +15,7 @@ provider "aws" {
 
 # VARIABLES
 variable "ALERT_EMAIL" {
-  description = "Email for budget alerts"
+  description = "Email for budget and alertmanager alerts"
   type        = string
   sensitive   = true
 }
@@ -26,11 +26,6 @@ variable "GRAFANA_PASSWORD" {
   sensitive   = true
 }
 
-variable "EMAIL_TO" {
-  description = "target email address"
-  type        = string
-  sensitive   = true
-}
 
 variable "EMAIL_FROM" {
   description = "Gmail address for alertmanager"
@@ -131,7 +126,10 @@ resource "aws_instance" "app_server" {
               EMAIL_FROM=${var.EMAIL_FROM}
               EMAIL_USER=${var.EMAIL_FROM}
               EMAIL_PASS=${var.EMAIL_PASS}
-              EOT              
+              EOT
+
+              # permission for alertmanager script
+              chmod +x /home/ubuntu/gpu-observer/start-alertmanager.sh              
               docker compose up -d --build
               EOF
 
