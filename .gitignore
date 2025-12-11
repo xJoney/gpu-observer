@@ -17,3 +17,11 @@ grafana-data/
 
 # email acc info
 .env
+
+# terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfplan
+.terraform.lock.hcl
