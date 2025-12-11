@@ -17,4 +17,5 @@ scrape_configs:
       # - targets: ['localhost:8081']
 
       # docker bridge IP
-      - targets: ['172.17.0.1:8081']
+      # - targets: ['172.17.0.1:8081']
+      - targets: ['cloudservice:8081']

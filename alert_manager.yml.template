@@ -19,5 +19,5 @@ receivers:
       headers:
         Subject: 'GPU Alert: {{ .GroupLabels.alertname }}'
     webhook_configs:
-      - url: 'http://172.17.0.1:8081/alert'
+      - url: 'http://cloudservice:8081/alert'
         send_resolved: true
